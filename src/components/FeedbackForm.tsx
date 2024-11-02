@@ -1,5 +1,4 @@
 'use client'
-import { useState } from 'react'
 import { PixelButton } from './PixelButton'
 
 interface FeedbackFormProps {
@@ -13,14 +12,36 @@ export function FeedbackForm({ restaurantId, onClose, onSubmit }: FeedbackFormPr
     e.preventDefault()
     const formData = new FormData(e.target as HTMLFormElement)
     const feedbackData = Object.fromEntries(formData.entries())
+    
+    // Log the data being sent
+    console.log('Sending feedback data:', {
+      restaurantId,
+      feedbackData
+    });
 
-    await fetch('/api/feedback', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ restaurantId, feedbackData }),
-    })
+    try {
+      const response = await fetch('/api/feedback', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          restaurantId,
+          feedback: feedbackData // Make sure this matches what the API expects
+        }),
+      })
 
-    onSubmit()
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('Server error:', errorData);
+        throw new Error(errorData.error || 'Failed to submit feedback');
+      }
+      else {
+        localStorage.setItem('feedbackSubmitted', 'true')
+        console.log('Feedback submitted successfully');
+      }
+      onSubmit()
+    } catch (error) {
+      console.error('Error submitting feedback:', error);
+    }
   }
 
   return (
@@ -35,16 +56,16 @@ export function FeedbackForm({ restaurantId, onClose, onSubmit }: FeedbackFormPr
             <div key={index} className="mb-4">
               <label className="block text-[#0f380f] mb-2 pixel-text">{question}</label>
               <input 
-                name={`question-${index}`} 
+                name={`question${index + 1}`}  // Changed to be more specific
                 type="text" 
                 className="w-full px-3 py-2 bg-[#8bac0f] border-2 border-[#306230] text-[#0f380f]" 
                 required 
               />
             </div>
           ))}
-          <PixelButton>Submit Feedback</PixelButton>
+          <PixelButton type="submit">Submit Feedback</PixelButton>
         </form>
       </div>
     </div>
   )
-} 
+}

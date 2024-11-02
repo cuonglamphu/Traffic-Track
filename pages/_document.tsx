@@ -1,4 +1,5 @@
 import Document, { Html, Head, Main, NextScript } from 'next/document';
+import Script from 'next/script';
 
 class MyDocument extends Document {
   render() {
@@ -6,17 +7,18 @@ class MyDocument extends Document {
       <Html>
         <Head>
           {/* Google Analytics */}
-          <script async src="https://www.googletagmanager.com/gtag/js?id=G-D0JKMDRYKH"></script>
-          <script
-            dangerouslySetInnerHTML={{
-              __html: `
-                window.dataLayer = window.dataLayer || [];
-                function gtag(){dataLayer.push(arguments);}
-                gtag('js', new Date());
-                gtag('config', 'G-D0JKMDRYKH');
-              `,
-            }}
+          <Script
+            src="https://www.googletagmanager.com/gtag/js?id=G-D0JKMDRYKH"
+            strategy="afterInteractive"
           />
+          <Script id="google-analytics" strategy="afterInteractive">
+            {`
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'G-D0JKMDRYKH');
+            `}
+          </Script>
         </Head>
         <body>
           <Main />
@@ -27,4 +29,4 @@ class MyDocument extends Document {
   }
 }
 
-export default MyDocument; 
+export default MyDocument;

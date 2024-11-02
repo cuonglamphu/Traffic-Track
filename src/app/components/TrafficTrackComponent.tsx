@@ -5,8 +5,6 @@ import { RestaurantCard } from '@/components/RestaurantCard'
 import { RestaurantDetail } from '@/components/RestaurantDetail'
 import { MenuView } from '@/components/MenuView'
 import { restaurants } from '../../data/restaurant'
-import { FeedbackForm } from "@/components/FeedbackForm"
-
 export default function Component() {
   const [view, setView] = useState('main')
   const [selectedRestaurant, setSelectedRestaurant] = useState<number | null>(null)

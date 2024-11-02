@@ -2,13 +2,15 @@
   "name": "my-next-app",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
+    "lint": "next lint",
+    "lint:fix": "next lint --fix",
     "dev": "next dev",
     "socket-server": "ts-node src/server.ts",
-    "dev:all": "concurrently \"npm run dev\" \"npm run socket-server\"",
+    "dev:all": "concurrently \"npm run dev\" \"node --loader ts-node/esm src/server.ts\"",
     "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
+    "start": "next start"
   },
   "dependencies": {
     "@ffmpeg-installer/ffmpeg": "^1.1.0",
@@ -32,10 +34,15 @@
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "@typescript-eslint/eslint-plugin": "^8.12.2",
+    "@typescript-eslint/parser": "^8.12.2",
     "eslint": "^8",
-    "eslint-config-next": "15.0.2",
+    "eslint-config-next": "^15.0.2",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "eslint-plugin-react": "^7.37.2",
+    "eslint-plugin-react-hooks": "^5.0.0",
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
-    "typescript": "^5"
+    "typescript": "^5.0.0"
   }
 }

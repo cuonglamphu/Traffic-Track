@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import ffmpeg from 'fluent-ffmpeg';
 import { join } from 'path';
-import { writeFile } from 'fs/promises';
 import { v4 as uuidv4 } from 'uuid';
 
 export async function GET(request: Request) {

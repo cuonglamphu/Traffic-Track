@@ -30,10 +30,10 @@ export async function POST() {
     const newCount = currentCount + 1
     await fs.writeFile(visitorPath, JSON.stringify({ count: newCount }))
     return NextResponse.json({ count: newCount })
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { error: 'Failed to update visitor count' },
       { status: 500 }
     )
   }
-} 
+}

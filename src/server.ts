@@ -1,8 +1,13 @@
-const express = require("express");
-const { createServer } = require("http");
-const { Server, Socket } = require("socket.io");
-const cors = require("cors");
-const ffmpeg = require('fluent-ffmpeg');
+import express from 'express';
+import { createServer } from 'http';
+import { Server, Socket } from 'socket.io';
+import cors from 'cors';
+import ffmpeg from 'fluent-ffmpeg';
+
+interface StreamUrl {
+    streamUrl: string;
+}
+
 const app = express();
 const httpServer = createServer(app);
 
@@ -15,10 +20,10 @@ const io = new Server(httpServer, {
     },
 });
 
-io.on("connection", (socket: typeof Socket) => {
+io.on("connection", (socket: Socket) => {
     console.log("Client connected");
 
-    socket.on("subscribe", ({ streamUrl }: { streamUrl: string }) => {
+    socket.on("subscribe", ({ streamUrl }: StreamUrl) => {
         console.log("Subscribing to:", streamUrl);
 
         try {
@@ -28,12 +33,12 @@ io.on("connection", (socket: typeof Socket) => {
                 .on('end', () => {
                     console.log('Stream processing ended');
                 })
-                .on('error', (err: any) => {
+                .on('end', (err) => {
                     console.error('Error processing stream:', err);
                 })
                 .pipe();
 
-            ffmpegProcess.on('data', (chunk: any) => {
+            ffmpegProcess.on('data', (chunk: Buffer) => {
                 console.log('Sending frame');
                 socket.emit('frame', chunk.toString('base64'));
             });
@@ -47,7 +52,7 @@ io.on("connection", (socket: typeof Socket) => {
         }
     });
 
-    socket.on("unsubscribe", ({ streamUrl }: { streamUrl: string }) => {
+    socket.on("unsubscribe", ({ streamUrl }: StreamUrl) => {
         console.log("Unsubscribing from:", streamUrl);
     });
 

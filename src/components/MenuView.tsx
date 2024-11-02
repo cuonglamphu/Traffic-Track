@@ -28,12 +28,22 @@ export function MenuView({
   const [isMenuModalOpen, setIsMenuModalOpen] = useState<boolean>(false)
 
   return (
-    <div className="min-h-screen bg-[#8bac0f] p-4 font-mono">
-      <div className="max-w-4xl mx-auto bg-[#9bbc0f] p-4 border-4 border-[#306230]">
+    <div
+      className="min-h-screen bg-[#8bac0f] p-4 font-mono"
+      role="main"
+    >
+      <div
+        className="max-w-4xl mx-auto bg-[#9bbc0f] p-4 border-4 border-[#306230]"
+      >
         <h1 className="text-4xl font-bold text-center text-[#0f380f] mb-8 pixel-text">
           {restaurant.name} Menu
         </h1>
-        <div className="mb-8 cursor-pointer" onClick={() => setIsMenuModalOpen(true)}>
+        <button
+          onClick={() => setIsMenuModalOpen(true)}
+          onKeyDown={(e) => e.key === 'Enter' && setIsMenuModalOpen(true)}
+          className="mb-8 cursor-pointer w-full"
+          aria-label="Open menu image"
+        >
           <Image
             src={restaurant.menu}
             alt="Restaurant menu"
@@ -41,20 +51,37 @@ export function MenuView({
             height={600}
             className="pixelated w-full h-auto"
           />
-        </div>
-        <div className="text-center">
+        </button>
+        <div
+          className="text-center"
+        >
           <PixelButton onClick={onBack}>Go Back Now</PixelButton>
         </div>
       </div>
 
       {isMenuModalOpen && (
-        <div className="modal" onClick={() => setIsMenuModalOpen(false)}>
-          <div className="modal-content-wrapper">
-            <span className="close" onClick={() => setIsMenuModalOpen(false)}>&times;</span>
-            <img 
-              className="modal-content" 
-              src={restaurant.menu} 
-              alt="Full view of menu" 
+        <div
+          role="dialog"
+          aria-modal="true"
+          className="modal"
+        >
+          <div
+            className="modal-content-wrapper"
+          >
+            <button 
+              className="close"
+              onClick={() => setIsMenuModalOpen(false)}
+              onKeyDown={(e) => e.key === 'Enter' && setIsMenuModalOpen(false)}
+              aria-label="Close menu modal"
+            >
+              &times;
+            </button>
+            <Image 
+              src={restaurant.menu}
+              alt="Full view of menu"
+              width={1200}
+              height={900}
+              className="modal-content"
             />
           </div>
         </div>
@@ -69,8 +96,14 @@ export function MenuView({
       )}
 
       {showThankYou && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-[#9bbc0f] p-6 border-4 border-[#306230] max-w-md w-full text-center">
+        <div
+          role="dialog"
+          aria-modal="true" 
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+        >
+          <div
+            className="bg-[#9bbc0f] p-6 border-4 border-[#306230] max-w-md w-full text-center"
+          >
             <h2 className="text-2xl font-bold text-[#0f380f] mb-4 pixel-text">
               Thank You!
             </h2>
@@ -83,4 +116,4 @@ export function MenuView({
       )}
     </div>
   )
-} 
+}

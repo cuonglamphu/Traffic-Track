@@ -1,5 +1,5 @@
 'use client'
-
+import Image from 'next/image';
 import { useEffect, useState } from "react"
 import { io } from "socket.io-client"
 
@@ -40,27 +40,59 @@ export function StreamView({ streamUrl, restaurantId }: StreamViewProps) {
     const closeModal = () => setIsModalOpen(false)
 
     return (
-        <div>
-            <div className="stream-container" onClick={openModal}>
-                {loading ? (
-                    <div className="skeleton spinner-container">
-                        <div className="spinner"></div>
-                    </div>
-                ) : (
-                    <img
-                        src={currentFrame}
-                        alt="Live stream capture"
-                        className="stream-image pixelated"
-                    />
-                )}
-            </div>
+        <div 
+            className="stream-view-container"
+            onClick={openModal}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => e.key === 'Enter' && openModal()}
+            aria-label="Stream view container"
+        >
+            {loading ? (
+                <div 
+                    className="skeleton spinner-container" 
+                    role="status"
+                    aria-label="Loading spinner"
+                >
+                    <div className="spinner"></div>
+                </div>
+            ) : currentFrame ? (  // Only render Image when currentFrame exists
+                <Image
+                    src={currentFrame}
+                    alt="Live stream capture"
+                    width={320}
+                    height={240}
+                    className="stream-image pixelated"
+                />
+            ) : null}
 
-            {isModalOpen && (
-                <div className="modal" onClick={closeModal}>
-                    <span className="close" onClick={closeModal}>&times;</span>
-                    <img className="modal-content" src={currentFrame} alt="Full view" />
+            {isModalOpen && currentFrame && (  // Only show modal when we have a frame
+                <div 
+                    className="modal-overlay"
+                    role="dialog"
+                    aria-modal="true"
+                >
+                    <div className="modal-content">
+                        <button 
+                            className="close-button"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                closeModal();
+                            }}
+                            aria-label="Close modal"
+                        >
+                            &times;
+                        </button>
+                        <Image 
+                            className="modal-image" 
+                            src={currentFrame}
+                            alt="Full view"
+                            width={800}
+                            height={600}
+                        />
+                    </div>
                 </div>
             )}
         </div>
     )
-} 
+}

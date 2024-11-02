@@ -1,0 +1,11 @@
+[
+  {
+    "restaurantId": 1,
+    "feedback": {
+      "question1": "12311233",
+      "question2": "123123123",
+      "question3": "123123123"
+    },
+    "timestamp": "2024-11-02T06:09:26.567Z"
+  }
+]

@@ -1,34 +1,54 @@
 import { NextResponse } from 'next/server'
+import { promises as fs } from 'fs'
+import path from 'path'
 
 export async function POST(request: Request) {
   try {
-    const body = await request.json()
-    const { restaurantId, feedbackData } = body
+    const data = await request.json();
     
-    // Create feedback object with timestamp
-    const feedback = {
-      restaurantId,
-      feedbackData,
+    // Use absolute path and ensure it's in a writable location
+    const feedbackDir = path.join(process.cwd(), 'public', 'feedback');
+    const feedbackFile = path.join(feedbackDir, 'feedback.json');
+
+    // Create directory if it doesn't exist
+    try {
+      await fs.mkdir(feedbackDir, { recursive: true });
+    } catch (err) {
+      console.log('Directory exists or creation failed:', err);
+    }
+
+    // Read existing feedback (with better error handling)
+    let existingFeedback = [];
+    try {
+      const fileContent = await fs.readFile(feedbackFile, 'utf8');
+      existingFeedback = JSON.parse(fileContent);
+    } catch (err) {
+      // File doesn't exist yet, we'll create it
+      console.log('Creating new feedback file', err);
+    }
+
+    // Add new feedback
+    const newFeedback = {
+      ...data,
       timestamp: new Date().toISOString()
-    }
-    
-    // Read existing feedback
-    const fs = require('fs')
-    const path = require('path')
-    const feedbackPath = path.join(process.cwd(), 'feedback.json')
-    
-    let feedbacks = []
-    if (fs.existsSync(feedbackPath)) {
-      const data = fs.readFileSync(feedbackPath, 'utf8')
-      feedbacks = JSON.parse(data)
-    }
-    
-    // Add new feedback and write back to file
-    feedbacks.push(feedback)
-    fs.writeFileSync(feedbackPath, JSON.stringify(feedbacks, null, 2))
-    
-    return NextResponse.json({ message: 'Feedback received' }, { status: 200 })
+    };
+    existingFeedback.push(newFeedback);
+
+    // Write to file
+    await fs.writeFile(
+      feedbackFile,
+      JSON.stringify(existingFeedback, null, 2),
+      'utf8'
+    );
+
+    console.log('Feedback saved successfully');  // Debug log
+    return NextResponse.json({ success: true, data: newFeedback });
+
   } catch (error) {
-    return NextResponse.json({ error: 'Failed to submit feedback' }, { status: 500 })
+    console.error('Error in feedback API:', error);  // Detailed error logging
+    return NextResponse.json(
+      { error: 'Failed to save feedback', details: error},
+      { status: 500 }
+    );
   }
 }
