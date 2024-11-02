@@ -79,7 +79,7 @@ We welcome contributions to enhance Traffic Track. To contribute:
 
 ## Reporting Issues
 
-If you encounter any issues or bugs with Traffic Track, please report them using the [GitHub Issues](https://github.com/yourusername/traffic-track/issues) tab. Provide as much detail as possible:
+If you encounter any issues or bugs with Traffic Track, please report them using the [GitHub Issues](https://github.com/cuonglamphu/traffic-track/issues) tab. Provide as much detail as possible:
 
 -   A clear and descriptive title
 -   Steps to reproduce the issue
