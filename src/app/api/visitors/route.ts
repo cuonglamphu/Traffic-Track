@@ -1,39 +1,92 @@
 import { NextResponse } from 'next/server'
-import { promises as fs } from 'fs'
-import path from 'path'
+import { MongoClient } from 'mongodb';
 
-// Path to the visitor count file
-const visitorPath = path.join(process.cwd(), 'visitors.json')
+let client: MongoClient;
+let cachedCount: number | null = null;
+const CACHE_DURATION = 60 * 1000; 
+let lastCacheTime = 0;
+
+interface VisitorDoc {
+  _id: string;
+  count: number;
+}
+
+async function getMongoClient() {
+  if (!client) {
+    client = new MongoClient(process.env.MONGODB_URI!);
+    await client.connect();
+  }
+  return client;
+}
 
 // Helper function to read/write visitor count
 async function getVisitorCount() {
-  try {
-    const data = await fs.readFile(visitorPath, 'utf8')
-    return JSON.parse(data).count
-  } catch {
-    // If file doesn't exist, create it with initial count of 0
-    await fs.writeFile(visitorPath, JSON.stringify({ count: 0 }))
-    return 0
+  const now = Date.now();
+  
+  if (cachedCount !== null && (now - lastCacheTime) < CACHE_DURATION) {
+    return cachedCount;
   }
+
+  const client = await getMongoClient();
+  const database = client.db('seatcount');
+  const collection = database.collection<VisitorDoc>('visitors');
+
+  const visitorDoc = await collection.findOne({ _id: 'visitor_count' });
+  
+  if (!visitorDoc) {
+    await collection.insertOne({ _id: 'visitor_count', count: 0 });
+    cachedCount = 0;
+  } else {
+    cachedCount = visitorDoc.count;
+  }
+  
+  lastCacheTime = now;
+  return cachedCount;
 }
 
 // GET endpoint to retrieve current count
 export async function GET() {
-  const count = await getVisitorCount()
-  return NextResponse.json({ count })
+  try {
+    const count = await getVisitorCount();
+    return NextResponse.json({ count });
+  } catch (error) {
+    console.error('Error fetching visitor count:', error);
+    return NextResponse.json(
+      { error: 'Failed to fetch visitor count' },
+      { status: 500 }
+    );
+  }
 }
 
 // POST endpoint to increment count
 export async function POST() {
   try {
-    const currentCount = await getVisitorCount()
-    const newCount = currentCount + 1
-    await fs.writeFile(visitorPath, JSON.stringify({ count: newCount }))
-    return NextResponse.json({ count: newCount })
-  } catch {
+    const client = await getMongoClient();
+    const database = client.db('seatcount');
+    const collection = database.collection<VisitorDoc>('visitors');
+
+    // Increment count by 1 and return new document
+    const result = await collection.findOneAndUpdate(
+      { _id: 'visitor_count' },
+      { $inc: { count: 1 } },
+      { 
+        upsert: true,
+        returnDocument: 'after'
+      }
+    );
+
+    if (!result) {
+      throw new Error('Failed to update visitor count');
+    }
+
+    const newCount = result.count;
+    return NextResponse.json({ count: newCount });
+
+  } catch (error) {
+    console.error('Error updating visitor count:', error);
     return NextResponse.json(
       { error: 'Failed to update visitor count' },
       { status: 500 }
-    )
+    );
   }
 }

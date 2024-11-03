@@ -30,14 +30,14 @@ Traffic Track is a real-time restaurant seat monitoring system built with Next.j
 
 ## Installation
 
-1. Clone the repository:
+1.  Clone the repository:
 
     ```bash
     git clone https://github.com/yourusername/traffic-track.git
     cd traffic-track
     ```
 
-2. Install dependencies:
+2.  Install dependencies:
 
     ```bash
     npm install
@@ -45,14 +45,25 @@ Traffic Track is a real-time restaurant seat monitoring system built with Next.j
     yarn install
     ```
 
-3. Create necessary configuration files:
+3.  Create necessary configuration files:
 
     ```bash
     # Create a visitors.json file in the root directory
     echo '{"count": 0}' > visitors.json
     ```
 
-4. Start the development server:
+4.  Copy .env.example to .env and set the environment variables
+
+        ```bash
+
+    NEXT_PUBLIC_APP_URL=
+    MONGODB_URI=
+
+    ```
+
+    ```
+
+5.  Start the development server:
 
     ```bash
     npm run dev:all
