@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { MongoClient } from 'mongodb';
-
+import connectToDatabase from '../../../lib/mongodb';
 // Tốt hơn là tạo một singleton connection
 let client: MongoClient;
 
