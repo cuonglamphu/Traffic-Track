@@ -1,24 +1,19 @@
-import { NextResponse } from 'next/server'
-import { MongoClient } from 'mongodb';
+import { NextResponse } from 'next/server';
 import connectToDatabase from '../../../lib/mongodb';
-// Tốt hơn là tạo một singleton connection
-let client: MongoClient;
-
-async function getMongoClient() {
-  if (!client) {
-    client = new MongoClient(process.env.MONGODB_URI!);
-    await client.connect();
-  }
-  return client;
-}
 
 export async function POST(request: Request) {
   try {
+    const startTime = performance.now();
+    const { db } = await connectToDatabase();
+    const collection = db.collection('feedback');
+
     const data = await request.json();
-    const client = await getMongoClient();
-    
-    const database = client.db('seatcount'); // hoặc tên database bạn muốn
-    const collection = database.collection('feedback');
+    if (!data.rating) {
+      return NextResponse.json(
+        { error: 'Rating is required' },
+        { status: 400 }
+      );
+    }
 
     const newFeedback = {
       ...data,
@@ -26,8 +21,8 @@ export async function POST(request: Request) {
     };
 
     const result = await collection.insertOne(newFeedback);
+    console.log(`Feedback saved in ${performance.now() - startTime}ms`);
     
-    console.log('Feedback saved successfully with ID:', result.insertedId);
     return NextResponse.json({ 
       success: true, 
       data: { ...newFeedback, _id: result.insertedId } 
@@ -36,7 +31,7 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error('Error in feedback API:', error);
     return NextResponse.json(
-      { error: 'Failed to save feedback', details: error},
+      { error: 'Failed to save feedback' },
       { status: 500 }
     );
   }
@@ -44,21 +39,23 @@ export async function POST(request: Request) {
 
 export async function GET() {
   try {
-    const client = await getMongoClient();
-    const database = client.db('seatcount');
-    const collection = database.collection('feedback');
+    const { db } = await connectToDatabase();
+    const collection = db.collection('feedback');
 
     const feedbacks = await collection.find({})
-      .sort({ timestamp: -1 }) // Sắp xếp theo thời gian mới nhất
-      .limit(100) // Giới hạn số lượng kết quả
+      .sort({ timestamp: -1 })
+      .limit(100)
       .toArray();
 
-    return NextResponse.json({ success: true, data: feedbacks });
+    return NextResponse.json({ 
+      success: true, 
+      data: feedbacks 
+    });
 
   } catch (error) {
     console.error('Error fetching feedback:', error);
     return NextResponse.json(
-      { error: 'Failed to fetch feedback', details: error},
+      { error: 'Failed to fetch feedback' },
       { status: 500 }
     );
   }

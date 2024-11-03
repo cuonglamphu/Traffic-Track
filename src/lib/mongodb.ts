@@ -1,4 +1,4 @@
-import { MongoClient } from 'mongodb';
+import { MongoClient, Db } from 'mongodb';
 
 const MONGODB_URI = process.env.MONGODB_URI!;
 const options = {
@@ -9,13 +9,12 @@ const options = {
 };
 
 let cachedClient: MongoClient | null = null;
-let cachedDb: any = null;
+let cachedDb: Db | null = null;
 
 if (!MONGODB_URI) {
   throw new Error('Please define MONGODB_URI environment variable');
 }
 
-// Thay đổi cách export
 const connectToDatabase = async () => {
   if (cachedClient && cachedDb) {
     return { client: cachedClient, db: cachedDb };
@@ -31,5 +30,4 @@ const connectToDatabase = async () => {
   return { client, db };
 }
 
-// Export default thay vì named export
 export default connectToDatabase;
