@@ -2,6 +2,7 @@
 import { PixelButton } from './PixelButton'
 import { StreamView } from './StreamView'
 import { Restaurant } from '@/types/restaurant'
+import Image from 'next/image'
 
 interface RestaurantDetailProps {
   restaurant: Restaurant
@@ -41,13 +42,15 @@ export function RestaurantDetail({ restaurant, onBack, onMenu }: RestaurantDetai
             Restaurant Layout
           </h2>
           <div className="relative aspect-square w-full max-w-2xl mx-auto">
-            <img 
-              src="/restaurant.gif" 
+            <Image 
+              src="/restaurant.gif"
               alt="Restaurant Layout Map"
-              className="w-full h-full object-contain image-rendering-pixel"
+              fill
+              className="object-contain image-rendering-pixel"
               style={{
                 imageRendering: 'pixelated'
               }}
+              priority
             />
           </div>
         </div>
