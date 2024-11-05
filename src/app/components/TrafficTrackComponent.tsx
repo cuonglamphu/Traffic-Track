@@ -5,6 +5,8 @@ import { RestaurantCard } from '@/components/RestaurantCard'
 import { RestaurantDetail } from '@/components/RestaurantDetail'
 import { MenuView } from '@/components/MenuView'
 import { restaurants } from '../../data/restaurant'
+import Flame from '@/components/Flame'
+
 export default function Component() {
   const [view, setView] = useState('main')
   const [selectedRestaurant, setSelectedRestaurant] = useState<number | null>(null)
@@ -75,14 +77,18 @@ export default function Component() {
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {restaurants.map((restaurant) => (
-            <RestaurantCard
-              key={restaurant.id}
-              restaurant={restaurant}
-              onSelect={(id) => {
-                setSelectedRestaurant(id)
-                setView('detail')
-              }}
-            />
+            <div key={restaurant.id} className="relative">
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
+                <Flame />
+              </div>
+              <RestaurantCard
+                restaurant={restaurant}
+                onSelect={(id) => {
+                  setSelectedRestaurant(id)
+                  setView('detail')
+                }}
+              />
+            </div>
           ))}
         </div>
       </div>

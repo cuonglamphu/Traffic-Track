@@ -152,3 +152,41 @@ body {
   font-weight: bold;
   cursor: pointer;
 }
+
+.flame-container {
+  overflow: hidden;
+}
+
+.flame-sprite {
+  width: 100%;
+  height: 100%;
+  background-image: url('../../public/Fire.png'); /* Đường dẫn tới sprite sheet của bạn */
+  background-size: 700% 100%; /* 7 frames nên là 700% */
+  animation: play-flame 0.8s steps(7) infinite;
+}
+
+@keyframes play-flame {
+  from {
+    background-position: 0% 0;
+  }
+  to {
+    background-position: 700% 0;
+  }
+}
+
+/* Con trỏ mặc định */
+* {
+  cursor: url('/cursor.png') 0 0, auto;
+}
+
+/* Con trỏ lớn hơn cho các phần tử có thể tương tác */
+a, 
+button, 
+[role="button"], 
+select, 
+input[type="submit"], 
+input[type="reset"], 
+input[type="button"],
+.clickable {
+  cursor: url('/cursor-hover.png') 0 0, pointer; /* Sử dụng phiên bản lớn hơn của cursor */
+}
