@@ -1,6 +1,5 @@
 'use client'
 import { PixelButton } from './PixelButton'
-import { StreamView } from './StreamView'
 import { Restaurant } from '@/types/restaurant'
 import Image from 'next/image'
 
@@ -12,19 +11,30 @@ interface RestaurantDetailProps {
 
 export function RestaurantDetail({ restaurant, onBack, onMenu }: RestaurantDetailProps) {
   return (
-    <div className="min-h-screen bg-[#8bac0f] p-4 font-mono">
+    <div className="min-h-screen bg-[#8bac0f] px-8 py-4 font-mono">
       <div className="max-w-4xl mx-auto bg-[#9bbc0f] p-4 border-4 border-[#306230]">
         <h1 className="text-4xl font-bold text-center text-[#0f380f] mb-8 pixel-text">
           Seat Availability
         </h1>
-        <div className="grid grid-cols-2 gap-4 mb-8">
-          {restaurant.seats.map((streamUrl, i) => (
-            <StreamView 
-              key={i} 
-              streamUrl={streamUrl} 
-              restaurantId={restaurant.id} 
-            />
-          ))}
+        <div className="max-w-4xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8 max-w-4xl mx-auto px-8">
+            {restaurant.seats.map((streamUrl, i) => (
+              <div key={i} className="flex flex-col items-center">
+                <h3 className="text-[#0f380f] mb-2 pixel-text text-lg font-bold">
+                  [{i + 1}]
+                </h3>
+                <div className="aspect-video w-full flex items-center justify-center">
+                  <div 
+                    dangerouslySetInnerHTML={{ __html: streamUrl }}
+                    className="youtube-container flex justify-center items-center"
+                  />
+                </div>
+              </div>
+            ))}
+            {restaurant.seats.length < 4 && (
+              <div className="aspect-video w-full"></div>
+            )}
+          </div>
         </div>
         <div className="flex flex-col items-center gap-4 mb-8">
           <p className="text-lg text-[#0f380f]">Call us: {restaurant.phone}</p>
@@ -57,4 +67,4 @@ export function RestaurantDetail({ restaurant, onBack, onMenu }: RestaurantDetai
       </div>
     </div>
   )
-} 
+}

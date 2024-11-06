@@ -16,10 +16,10 @@ export function Header() {
       <div className="relative bg-[#9bbc0f] max-w-2xl mx-auto p-4 border-4 border-[#306230]">
         <h1 className="text-4xl font-bold text-[#0f380f] mb-4 pixel-text">TRAFFIC TRACK</h1>
         <p className="text-lg text-[#0f380f] mb-4 pixel-text">
-          Find the best local restaurants and avoid the crowds!
+        A school project platform designed to help you determine the crowdedness of local restaurants, making your dining decisions easier.
         </p>
         <p className="text-lg text-[#0f380f] pixel-text">
-          FREE delivery under 20 minutes for Academic City restaurants.
+        FREE and under-20-minutes delivery for Academic City
         </p>
         <VisitorCounter />
       </div>

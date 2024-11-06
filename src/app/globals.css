@@ -190,3 +190,62 @@ input[type="button"],
 .clickable {
   cursor: url('/cursor-hover.png') 0 0, pointer; /* Sử dụng phiên bản lớn hơn của cursor */
 }
+
+.feedback-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  padding: 1rem;
+}
+
+.feedback-container {
+  position: relative;
+  background: white;
+  border-radius: 0.5rem;
+  width: 100%;
+  max-width: 640px;
+  height: 90vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.iframe-wrapper {
+  flex: 1;
+  overflow: hidden;
+}
+
+.feedback-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+.youtube-container iframe {
+  display: flex;
+  justify-content: center;
+  width: 320px;
+  height: 240px;
+}
+
+.youtube-modal-container iframe {
+  width: 800px;
+  height: 600px;
+}
+
+@font-face {
+  font-family: 'PixelFont';
+  /* Thêm source font của bạn ở đây */
+}
+
+.font-pixel {
+  font-family: 'PixelFont', monospace;
+  -webkit-font-smoothing: none;
+  -moz-osx-font-smoothing: none;
+}

@@ -1,4 +1,5 @@
 'use client'
+import { useState, useEffect } from 'react'
 import { PixelButton } from './PixelButton'
 
 interface FeedbackFormProps {
@@ -7,64 +8,66 @@ interface FeedbackFormProps {
   onSubmit: () => void
 }
 
-export function FeedbackForm({ restaurantId, onClose, onSubmit }: FeedbackFormProps) {
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    const formData = new FormData(e.target as HTMLFormElement)
-    const feedbackData = Object.fromEntries(formData.entries())
-    
-    // Log the data being sent
-    console.log('Sending feedback data:', {
-      restaurantId,
-      feedbackData
-    });
+export function FeedbackForm({ restaurantId, onClose }: FeedbackFormProps) {
+  const [showThanks, setShowThanks] = useState(false)
 
-    try {
-      const response = await fetch('/api/feedback', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          restaurantId,
-          feedback: feedbackData // Make sure this matches what the API expects
-        }),
-      })
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error('Server error:', errorData);
-        throw new Error(errorData.error || 'Failed to submit feedback');
+  useEffect(() => {
+    const lastFeedback = localStorage.getItem(`feedback_${restaurantId}`)
+    if (lastFeedback) {
+      const lastTime = parseInt(lastFeedback)
+      const oneHour = 60 * 60 * 1000 // 1 hour in milliseconds
+      if (Date.now() - lastTime < oneHour) {
+        onClose()
       }
-      else {
-        localStorage.setItem('feedbackSubmitted', 'true')
-        console.log('Feedback submitted successfully');
-      }
-      onSubmit()
-    } catch (error) {
-      console.error('Error submitting feedback:', error);
     }
+  }, [restaurantId, onClose])
+
+  const handleClose = () => {
+    setShowThanks(true)
+    localStorage.setItem(`feedback_${restaurantId}`, Date.now().toString())
+    setTimeout(() => {
+      onClose()
+    }, 2000)
+  }
+
+  if (showThanks) {
+    return (
+      <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div className="relative bg-white rounded-[4px] w-full max-w-[400px] p-8
+                      border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+          <div className="text-center">
+            <h2 className="font-pixel text-2xl mb-4">Thank You!</h2>
+            <p className="font-pixel text-lg">We appreciate your feedback!</p>
+          </div>
+          <div className="absolute top-2 right-2">
+            <PixelButton onClick={handleClose}>✕</PixelButton>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-[#9bbc0f] p-6 border-4 border-[#306230] max-w-md w-full relative">
-        <div className="absolute top-2 right-2">
-          <PixelButton onClick={onClose}>×</PixelButton>
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+      <div className="relative bg-white rounded-[4px] w-full max-w-[640px] h-[90vh] flex flex-col
+                    border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+        <div className="bg-[#E0E0E0] p-2 border-b-4 border-black flex justify-between items-center">
+          <span className="font-pixel text-lg">Feedback Form</span>
+          <PixelButton
+            onClick={handleClose}
+          >
+            ✕
+          </PixelButton>
         </div>
-        <h2 className="text-2xl font-bold text-[#0f380f] mb-4 pixel-text">Your Feedback</h2>
-        <form onSubmit={handleSubmit}>
-          {['How was the food?', 'How was the service?', 'Would you recommend us?'].map((question, index) => (
-            <div key={index} className="mb-4">
-              <label className="block text-[#0f380f] mb-2 pixel-text">{question}</label>
-              <input 
-                name={`question${index + 1}`}  // Changed to be more specific
-                type="text" 
-                className="w-full px-3 py-2 bg-[#8bac0f] border-2 border-[#306230] text-[#0f380f]" 
-                required 
-              />
-            </div>
-          ))}
-          <PixelButton type="submit">Submit Feedback</PixelButton>
-        </form>
+        <div className="flex-1 overflow-hidden">
+          <iframe 
+            title="Feedback Form"
+            src="https://docs.google.com/forms/d/e/1FAIpQLSdqA9ab6Es-nWtwObQEa6wYsicJdDrlBkfelfDfCOTITLqFvw/viewform?embedded=true" 
+            className="w-full h-full"
+          >
+            Loading…
+          </iframe>
+        </div>
       </div>
     </div>
   )
