@@ -5,12 +5,11 @@ import { useState } from "react"
 import { PixelButton } from "./PixelButton"
 import { FeedbackForm } from "./FeedbackForm"
 import { Restaurant } from "@/types/restaurant"
+import { FeedbackButton } from './FeedbackButton'
 
 interface MenuViewProps {
   restaurant: Restaurant
   onBack: () => void
-  showFeedback: boolean
-  feedbackSubmitted: boolean
   onFeedbackClose: () => void
   onFeedbackSubmit: () => void
   showThankYou: boolean
@@ -18,20 +17,33 @@ interface MenuViewProps {
 
 export function MenuView({ 
   restaurant, 
-  onBack, 
-  showFeedback, 
-  feedbackSubmitted,
+  onBack,
   onFeedbackClose,
   onFeedbackSubmit,
   showThankYou 
 }: MenuViewProps) {
   const [isMenuModalOpen, setIsMenuModalOpen] = useState<boolean>(false)
-
+  const [showFeedbackForm, setShowFeedbackForm] = useState(false)
+  
   return (
     <div
       className="min-h-screen bg-[#8bac0f] p-4 font-mono"
       role="main"
     >
+      <FeedbackButton onClick={() => setShowFeedbackForm(true)} />
+      
+      {showFeedbackForm && (
+        <FeedbackForm
+          restaurantId={restaurant.id}
+          onClose={() => setShowFeedbackForm(false)}
+          onSubmit={() => {
+            setShowFeedbackForm(false)
+            onFeedbackSubmit()
+          }}
+          isStarButton={true}
+        />
+      )}
+      
       <div
         className="max-w-4xl mx-auto bg-[#9bbc0f] p-4 border-4 border-[#306230]"
       >
@@ -85,14 +97,6 @@ export function MenuView({
             />
           </div>
         </div>
-      )}
-
-      {showFeedback && !feedbackSubmitted && (
-        <FeedbackForm
-          restaurantId={restaurant.id}
-          onClose={onFeedbackClose}
-          onSubmit={onFeedbackSubmit}
-        />
       )}
 
       {showThankYou && (

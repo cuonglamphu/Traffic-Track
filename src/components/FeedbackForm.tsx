@@ -1,30 +1,22 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { PixelButton } from './PixelButton'
 
 interface FeedbackFormProps {
   restaurantId: number
   onClose: () => void
   onSubmit: () => void
+  isStarButton?: boolean
 }
 
-export function FeedbackForm({ restaurantId, onClose }: FeedbackFormProps) {
+export function FeedbackForm({ restaurantId, onClose, isStarButton = false }: FeedbackFormProps) {
   const [showThanks, setShowThanks] = useState(false)
-
-  useEffect(() => {
-    const lastFeedback = localStorage.getItem(`feedback_${restaurantId}`)
-    if (lastFeedback) {
-      const lastTime = parseInt(lastFeedback)
-      const oneHour = 60 * 60 * 1000 // 1 hour in milliseconds
-      if (Date.now() - lastTime < oneHour) {
-        onClose()
-      }
-    }
-  }, [restaurantId, onClose])
 
   const handleClose = () => {
     setShowThanks(true)
-    localStorage.setItem(`feedback_${restaurantId}`, Date.now().toString())
+    if (!isStarButton) {
+      localStorage.setItem(`feedback_${restaurantId}`, Date.now().toString())
+    }
     setTimeout(() => {
       onClose()
     }, 2000)

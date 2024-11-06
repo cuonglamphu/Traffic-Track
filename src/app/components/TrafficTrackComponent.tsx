@@ -6,36 +6,23 @@ import { RestaurantDetail } from '@/components/RestaurantDetail'
 import { MenuView } from '@/components/MenuView'
 import { restaurants } from '../../data/restaurant'
 import Flame from '@/components/Flame'
+import { FeedbackForm } from '@/components/FeedbackForm'
+import Image from 'next/image'
 
 export default function Component() {
   const [view, setView] = useState('main')
   const [selectedRestaurant, setSelectedRestaurant] = useState<number | null>(null)
-  const [showFeedback, setShowFeedback] = useState(false)
-  const [feedbackSubmitted, setFeedbackSubmitted] = useState(false)
+  const [, setShowFeedback] = useState(false)
+  const [, setFeedbackSubmitted] = useState(false)
   const [showThankYou, setShowThankYou] = useState<boolean>(false)
+  const [showFeedbackForm, setShowFeedbackForm] = useState(false)
 
   useEffect(() => {
     const feedbackGiven = localStorage.getItem(`feedbackGiven-${selectedRestaurant}`)
     if (feedbackGiven) {
       setFeedbackSubmitted(true)
     }
-
-    let feedbackTimeout: NodeJS.Timeout
-
-    if (view === 'detail' && !feedbackSubmitted) {
-      feedbackTimeout = setTimeout(() => {
-        setShowFeedback(true)
-      }, 10000)
-    }
-
-    if (view === 'menu' && !feedbackSubmitted) {
-      feedbackTimeout = setTimeout(() => {
-        setShowFeedback(true)
-      }, 5000)
-    }
-
-    return () => clearTimeout(feedbackTimeout)
-  }, [view, selectedRestaurant, feedbackSubmitted])
+  }, [selectedRestaurant])
 
   if (view === 'detail' && selectedRestaurant) {
     const restaurant = restaurants.find(r => r.id === selectedRestaurant)!
@@ -54,8 +41,6 @@ export default function Component() {
       <MenuView
         restaurant={restaurant}
         onBack={() => setView('detail')}
-        showFeedback={showFeedback}
-        feedbackSubmitted={feedbackSubmitted}
         onFeedbackClose={() => setShowFeedback(false)}
         onFeedbackSubmit={() => {
           setFeedbackSubmitted(true)
@@ -69,8 +54,33 @@ export default function Component() {
   }
 
   return (
-    <div className="min-h-screen bg-[#8bac0f] font-mono">
+    <div className="min-h-screen bg-[#8bac0f] font-mono relative">
       <Header />
+      <button
+        onClick={() => setShowFeedbackForm(true)}
+        className="fixed right-4 bottom-4 z-50 w-16 h-16 hover:scale-110 transition-transform duration-200"
+      >
+        <Image
+          src="/feedback.gif"
+          alt="Feedback"
+          width={100}
+          height={100}
+        />
+      </button>
+
+      {showFeedbackForm && (
+        <FeedbackForm
+          restaurantId={selectedRestaurant || 888}
+          onClose={() => setShowFeedbackForm(false)}
+          onSubmit={() => {
+            setShowFeedbackForm(false)
+            setShowThankYou(true)
+            setTimeout(() => setShowThankYou(false), 3000)
+          }}
+          isStarButton={true}
+        />
+      )}
+
       <div className="max-w-4xl mx-auto px-4 py-16">
         <h2 className="text-4xl font-bold text-center text-[#0f380f] mb-12 pixel-text">
           OUR PARTNERS

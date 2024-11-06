@@ -2,6 +2,9 @@
 import { PixelButton } from './PixelButton'
 import { Restaurant } from '@/types/restaurant'
 import Image from 'next/image'
+import { useState, useEffect } from 'react'
+import { FeedbackButton } from './FeedbackButton'
+import { FeedbackForm } from './FeedbackForm'
 
 interface RestaurantDetailProps {
   restaurant: Restaurant
@@ -10,8 +13,43 @@ interface RestaurantDetailProps {
 }
 
 export function RestaurantDetail({ restaurant, onBack, onMenu }: RestaurantDetailProps) {
+  const [showFeedbackForm, setShowFeedbackForm] = useState(false)
+  const [, setShowThankYou] = useState(false)
+
+  useEffect(() => {
+    const hasFeedback = 
+      localStorage.getItem(`feedback-${restaurant.id}`) === 'true' || 
+      localStorage.getItem(`feedbackGiven-${restaurant.id}`) === 'true'
+
+    if (!hasFeedback) {
+      const timer = setTimeout(() => {
+        setShowFeedbackForm(true)
+      }, 5000)
+      return () => clearTimeout(timer)
+    }
+  }, [restaurant.id])
+
+  const handleFeedbackSubmit = () => {
+    localStorage.setItem(`feedback-${restaurant.id}`, 'true')
+    localStorage.setItem(`feedbackGiven-${restaurant.id}`, 'true')
+    setShowFeedbackForm(false)
+    setShowThankYou(true)
+    setTimeout(() => setShowThankYou(false), 3000)
+  }
+
   return (
     <div className="min-h-screen bg-[#8bac0f] px-8 py-4 font-mono">
+      <FeedbackButton onClick={() => setShowFeedbackForm(true)} />
+      
+      {showFeedbackForm && (
+        <FeedbackForm
+          restaurantId={restaurant.id}
+          onClose={() => setShowFeedbackForm(false)}
+          onSubmit={handleFeedbackSubmit}
+          isStarButton={true}
+        />
+      )}
+      
       <div className="max-w-4xl mx-auto bg-[#9bbc0f] p-4 border-4 border-[#306230]">
         <h1 className="text-4xl font-bold text-center text-[#0f380f] mb-8 pixel-text">
           Seat Availability
