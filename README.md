@@ -54,12 +54,9 @@ Traffic Track is a real-time restaurant seat monitoring system built with Next.j
 
 4.  Copy .env.example to .env and set the environment variables
 
-        ```bash
-
-    NEXT_PUBLIC_APP_URL=
-    MONGODB_URI=
-
-    ```
+       ```bash
+        NEXT_PUBLIC_APP_URL=
+        MONGODB_URI=
 
 5.  Start the development server:
 
