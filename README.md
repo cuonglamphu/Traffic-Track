@@ -3,6 +3,7 @@
 ## Overview
 
 Traffic Track is a real-time restaurant seat monitoring system built with Next.js 13+. It allows users to check seat availability at various restaurants by viewing the live video stream of the restaurant, view menus, and provide feedback about their experience.
+![image](https://github.com/user-attachments/assets/386cfa5c-9cc7-4859-838e-5604af78011e)
 
 ## Features
 
