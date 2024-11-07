@@ -6,7 +6,7 @@ Traffic Track is a real-time restaurant seat monitoring system built with Next.j
 ![image](https://github.com/user-attachments/assets/386cfa5c-9cc7-4859-838e-5604af78011e)
 ![image](https://github.com/user-attachments/assets/803bc215-d366-4266-a6c1-847367e59fe0)
 ![image](https://github.com/user-attachments/assets/f2380a48-ec26-4cbb-952e-81f409567ae3)
-![image](https://github.com/user-attachments/assets/d4d9c642-1bb3-47a4-aeff-cc7ce15d0e38)
+![image](https://github.com/user-attachments/assets/4ca70b9c-fb76-4e41-8f8a-5c0988b492fa)
 ![image](https://github.com/user-attachments/assets/7c6f6af8-6ce0-43e6-a2db-a9444a350f8e)
 
 ## Features
