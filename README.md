@@ -61,8 +61,6 @@ Traffic Track is a real-time restaurant seat monitoring system built with Next.j
 
     ```
 
-    ```
-
 5.  Start the development server:
 
     ```bash
